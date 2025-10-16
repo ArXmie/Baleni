@@ -30,3 +30,6 @@ def delenie(request):
 
     return HttpResponse(str(result))
 
+def index(request):
+    return render(request, "test-catalog.html")
+
