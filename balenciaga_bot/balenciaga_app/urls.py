@@ -6,5 +6,5 @@ urlpatterns = [
     path('mul', mul),
     path('umnoj', umnoj),
     path('delenie', delenie),
-    path('index', index)
+    path('', index)
 ]
