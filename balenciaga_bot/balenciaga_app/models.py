@@ -59,6 +59,18 @@ class Product(models.Model):
     def __str__(self):
         product_name = '{0.name} | {0.category}'
         return product_name.format(self)
+        
+class Product_Image(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    image = models.CharField()
+
+    class Meta:
+        verbose_name = "Товар-Картина"
+        verbose_name_plural = "Товары-Картины"
+
+    def __str__(self):
+        sp_name = '{0.product.name} | {0.image}'
+        return sp_name.format(self)
 
 class Size_Product(models.Model):
     size = models.ForeignKey(Size, on_delete=models.CASCADE)

@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse 
+from django.shortcuts import render, HttpResponse, get_object_or_404
 from .models import *
 
 # Create your views here.
@@ -30,6 +30,9 @@ def delenie(request):
 
     return HttpResponse(str(result))
 
-def index(request):
-    return render(request, "index.html")
+def index(request, category_id):
+    categories = Category.objects.all().order_by('category') 
+    products = Product.objects.select_related('category').all()  
+    images = Product_Image.objects.all()
+    return render(request, "index.html", { 'categories': categories, 'products': products, 'images': images, })
 

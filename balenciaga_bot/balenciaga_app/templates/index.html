@@ -19,7 +19,7 @@
               </div>
               
     <div class="logo">
-        <img src="https://www.balenciaga.com/on/demandware.static/-/Sites/default/dw09f423ba/images/logo/BAL/logo.svg" alt="Логотип сайта">
+        <img src="../static/logo.svg" alt="Логотип сайта">
     </div>
 
     <div class="actions">
@@ -34,46 +34,33 @@
 <main class="main-outline">
     <h1 style="font-size:48px; margin: 22px 0 22px 18px; font-weight: 10;">КАТАЛОГ</h1>
     <div class="catalog-list">
+      {% for category in categories %}
       <div class="catalog-category">
-        <div>Обувь</div>
+        <div>{{ category.category }}</div>
         <div class="products">
+          {% for product in products %}
+            {% if product.category.id == category.id %}
           <div class="product">
-            <img src="../static/balenciaga-yellow-black.png" height="72px" alt="src">
+            {% with image=product.product_image_set.first %}
+                                {% if image %}
+                                    <img src="{{ image.image }}" alt="{{ product.name }}">
+                                {% else %}
+                                    <img src="/static/no-image.png" alt="no image">
+                                {% endif %}
+                            {% endwith %}
             <div class="product-info">
-              <div>Speedcat Suede Balenciaga in Yellow/black</div>
-              <div>1 000 000$</div>
-            </div>
-          </div>
-          <div class="product">
-            <img src="../static/balenciaga-yellow-black.png" height="72px" alt="src">
-            <div class="product-info">
-              <div>Men's Track Trail Laces Sneaker</div>
-              <div>1 000 000$</div>
+              <b>{{ product.name }}</b>
+              <div class="price">{{ product.price }}$</div>
             </div>
           </div>
         </div>
-        <div>></div>
-      </div>
-      <div class="catalog-category">
-        <div>Свитшоты и толстовки с капюшоном</div>
-        <div class="products">
-          <div class="product">
-            <img src="../static/balenciaga-yellow-black.png" height="72px" alt="src">
-            <div class="product-info">
-              <div>Balenciaga</div>
-              <div>1 000 000$</div>
-            </div>
-          </div>
-          <div class="product">
-            <img src="../static/balenciaga-yellow-black.png" height="72px" alt="src">
-            <div class="product-info">
-              <div>Balenciaga</div>
-              <div>1 000 000$</div>
-            </div>
-          </div>
+        {% endif %}
+        {% endfor %}
+        <div class="arrow">
+            <img src="../static/arrow.png" alt=">">
         </div>
-        <div>></div>
       </div>
+      {% endfor %}
     </div>
 </main>
 <footer class="footer-1">
