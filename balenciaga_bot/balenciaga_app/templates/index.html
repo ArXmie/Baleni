@@ -34,28 +34,20 @@
 <main class="main-outline">
     <h1 style="font-size:48px; margin: 22px 0 22px 18px; font-weight: 10;">КАТАЛОГ</h1>
     <div class="catalog-list">
-      {% for category in categories %}
+      {% for item in data %}
       <div class="catalog-category">
-        <div>{{ category.category }}</div>
+        <div>{{ item.category.category }}</div>
         <div class="products">
-          {% for product in products %}
-            {% if product.category.id == category.id %}
+          {% for product in item.products %}
           <div class="product">
-            {% with image=product.product_image_set.first %}
-                                {% if image %}
-                                    <img src="{{ image.image }}" alt="{{ product.name }}">
-                                {% else %}
-                                    <img src="/static/no-image.png" alt="no image">
-                                {% endif %}
-                            {% endwith %}
+              <img src="{{ product.product_image_set.first.image }}" alt="{{ product.name }}">
             <div class="product-info">
               <b>{{ product.name }}</b>
               <div class="price">{{ product.price }}$</div>
             </div>
           </div>
+          {% endfor %}
         </div>
-        {% endif %}
-        {% endfor %}
         <div class="arrow">
             <img src="../static/arrow.png" alt=">">
         </div>

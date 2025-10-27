@@ -30,9 +30,13 @@ def delenie(request):
 
     return HttpResponse(str(result))
 
-def index(request, category_id):
-    categories = Category.objects.all().order_by('category') 
-    products = Product.objects.select_related('category').all()  
+def index(request):
+    categories = Category.objects.all()
+    data = []
+
+    for category in categories:
+        products = category.product_set.all()[:2]
+        data.append({'category': category, 'products': products}) 
     images = Product_Image.objects.all()
-    return render(request, "index.html", { 'categories': categories, 'products': products, 'images': images, })
+    return render(request, "index.html", { 'data': data })
 

@@ -60,12 +60,13 @@
     padding: 1px 0 1px 0; 
     max-width:var(--max); 
     margin:0 auto; 
-    height: 1400px; 
+    min-height: 900px; 
     background-color: #ffffff; 
     box-shadow: 
       0 1px 0 0 black,
       1px 0 0 0 black,
       -1px 0 0 0 black;
+    padding: 1px 0 50px 0;
   }
   .logo img{
     height:15px; 
@@ -87,6 +88,7 @@
   .catalog-list {
     display: flex;
     flex-wrap: wrap;
+    gap: 5px;
   }
   
   .catalog-category {
@@ -144,7 +146,9 @@
   }
 
   .product img {
+    width: 99px;
     height: 99px;
+    object-fit: contain;
   }
 
   .product-info .price {
