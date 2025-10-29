@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Мэйнстрим</title>
+  <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="div-width">
+      <img src="../static/balenciaga-banner.png" alt="banner">
+    </div>  
+    <header class="site-header">
+        <div class="container">
+            <div class="header-row">
+              <div class="catalog">
+                <a class="catalog-text" href="">Каталог</a>
+              </div>
+              
+        <div class="logo">
+            <img src="../static/logo.svg" alt="Логотип сайта">
+        </div>
+
+        <div class="actions">
+          <a height="34px" href="" class="search"><img src="../static/search.png" height="34px"></a>
+
+          <a class="login-text" href="">Войти</a>
+        </div>
+
+        </div>
+      </div>
+    </header>  
+    <main class="main-outline">
+        <h1 style="font-size:48px; margin: 22px 0 22px 18px; font-weight: 10;">КАТАЛОГ</h1>
+        <div class="catalog-list">
+          {% for item in data %}
+          <div class="catalog-category">
+            <div class="catalog-name">{{ item.category.category }}</div>
+            <div class="products">
+              {% for product in item.products %}
+              <div class="product">
+                  <img src="{{ product.product_image_set.first.image }}" alt="{{ product.name }}">
+                <div class="product-info">
+                  <b>{{ product.name }}</b>
+                  <div class="price">{{ product.price }}$</div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <div class="arrow">
+                <img src="../static/arrow.png" alt=">">
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+    </main>
+    <footer class="footer-1">
+        
+    </footer>  
+</body>
+</html>

@@ -38,5 +38,8 @@ def index(request):
         products = category.product_set.all()[:2]
         data.append({'category': category, 'products': products}) 
     images = Product_Image.objects.all()
-    return render(request, "index.html", { 'data': data })
+    return render(request, "main-catalog.html", { 'data': data })
+
+def template_product(request):
+    return render(request, "template_product.html")
 

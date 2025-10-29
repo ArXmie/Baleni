@@ -6,5 +6,6 @@ urlpatterns = [
     path('mul', mul),
     path('umnoj', umnoj),
     path('delenie', delenie),
-    path('', index)
+    path('', index, name='home'),
+    path('product', template_product, name='product')
 ]
