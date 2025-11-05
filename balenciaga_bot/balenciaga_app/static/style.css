@@ -218,13 +218,115 @@
   .product-template .left-part {
   }
 
-  .product-template .left-part img {
+  .product-template .left-part .image-container img {
     width: 100%;
+  }
+
+  .product-template .image-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 20px;
+    pointer-events: none;
+  }
+
+  .arrow {
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+    user-select: none;
+  }
+
+  .dots {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    background: rgb(129, 129, 129);
+    cursor: pointer;
   }
 
   .right-part .price {
     font-size: 20px;
     color: #ff008c;
+    margin: 17px 0 17px 0;
+  }
+
+  .size p {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+  }
+
+  .size .nav-list {
+    display: flex;
+    gap: 3px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-list .size-li {
+    width: 37px;
+    height: 24px;
+    border: 1px solid black;
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .nav-list .size-li:hover {
+    background-color: #f3f3f3;
+    border: 2px solid gray;
+  }
+
+  .buy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 168px;
+    height: 40px;
+    border: 1px solid black;
+    cursor: pointer;
+    margin-top: 15px;
+  }
+
+  .buy:hover {
+    background-color: #f3f3f3;
+    border: 2px solid gray;
+  }
+
+  .buy-text {
+    font-size: 12px;
   }
 
   .product-template .right-part {
