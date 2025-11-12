@@ -1,10 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Мэйнстрим</title>
-  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="{% static 'style.cc'}">
 </head>
 <body>
     <div class="div-width">
@@ -39,34 +40,25 @@
         <div class="product-template">
             <div class="left-part">
                 <div class="image-container">
-                     <img src="../static/Men-Loop-Sports-Icon-Tracksuit-Jacket-in-Black2.jpg" class="image">
+                    {% if images %}
+                     <img src="{{ images.0.image }}" class="image">
+                    {% endif %}
 
-                     <div class="overlay">
+                    <div class="overlay">
                         <div class="arrow-left"><</div>
                         <div class="dots">
-                            <div class="dot-active"></div>
-                            <div class="dot"></div>
-                            <div class="dot"></div>
+                            {% for img in images %}
+                            <div class="dot {% if forloop.first %}dot-active{% endif %}"></div>
+                            {% endfor %}
                         </div>
                         <div class="arrow-right">></div>
                      </div>
                 </div>
             </div>
             <div class="right-part">
-                <h2>Men's Loop Sports Icon Tracksuit Jacket in Black</h2>
-                <p>• Cotton poplin<br>
-                    • High neck<br>
-                    • Double-ended zip fastening<br>
-                    • Long sleeves<br>
-                    • 2 zipped slash pockets<br>
-                    • Gathered at cuffs and waistline<br>
-                    • Loop sports icon artwork embroidered at front<br>
-                    • Made in Italy<br>
-                    Main material: 100% cotton<br>
-                    Lining: 100% polyester<br>
-                    Embroidery: 100% polyester<br>
-                </p>
-                <p class="price">1 000 000$</p>
+                <h2>{{ product.name }}</h2>
+                <p>{{ product.desc }}</p>
+                <p class="price">{{ product.price }}</p>
                 <div class="size">
                     <p>Размер:</p>
                     <ul class="nav-list">
@@ -82,10 +74,22 @@
         </div>
         <div class="similar">
             <div class="name">
-
+                <h2>Похожие</h2>
             </div>
             <div class="list">
-
+                {% for item in similar %}
+                <a href="{% url 'product' item.id %}">
+                <div class="product">
+                    <img src="{{ item.product_image_set.first.image }}" alt="{{ item.name }}">
+                    <div class="product-info">
+                        <p>{{ item.name }}</p>
+                        <div class="price">{{ item.price }}</div>
+                    </div>
+                </div>
+                </a>
+                {% empty %}
+                    <p>Нет похожих товаров.</p>
+                {% endfor %}
             </div>
         </div>
     </main>

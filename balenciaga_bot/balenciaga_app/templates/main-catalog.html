@@ -38,6 +38,7 @@
             <div class="catalog-name">{{ item.category.category }}</div>
             <div class="products">
               {% for product in item.products %}
+              <a href="{% url 'product' product.id %}" class="product-link">
               <div class="product">
                   <img src="{{ product.product_image_set.first.image }}" alt="{{ product.name }}">
                 <div class="product-info">
@@ -45,6 +46,7 @@
                   <div class="price">{{ product.price }}$</div>
                 </div>
               </div>
+              </a>
               {% endfor %}
             </div>
             <div class="arrow">

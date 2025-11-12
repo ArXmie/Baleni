@@ -2,6 +2,8 @@ from django.shortcuts import render, HttpResponse, get_object_or_404
 from .models import *
 
 # Create your views here.
+
+# 127.0.0.1:8000/mul/?a=5&b=5
 def root(request):
     first_compoud = float(request.GET.get('a', 0))
     second_compoud = float(request.GET.get('b', 0))
@@ -40,6 +42,15 @@ def index(request):
     images = Product_Image.objects.all()
     return render(request, "main-catalog.html", { 'data': data })
 
-def template_product(request):
-    return render(request, "template_product.html")
+def template_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    images = Product_Image.objects.filter(product=product)
+    similar = Product.objects.filter(category=product.category).exclude(id=product_id)[:3]
+
+    context = {
+        'product': product,
+        'images': images,
+        'similar': similar,
+    }
+    return render(request, "template_product.html", context)
 
