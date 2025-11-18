@@ -5,11 +5,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Мэйнстрим</title>
-  <link rel="stylesheet" href="{% static 'style.cc'}">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
     <div class="div-width">
-      <img src="../static/balenciaga-banner.png" alt="banner">
+      <img src="{% static 'balenciaga-banner.png' %}" alt="banner">
     </div>  
     <header class="site-header">
         <div class="container">
@@ -19,11 +19,11 @@
                 </div>
                 
                 <div class="logo">
-                    <img src="../static/logo.svg" alt="Логотип сайта">
+                    <img src="{% static 'logo.svg' %}" alt="Логотип сайта">
                 </div>
 
                 <div class="actions">
-                <a height="34px" href="" class="search"><img src="../static/search.png" height="34px"></a>
+                <a height="34px" href="" class="search"><img src="{% static 'search.png' %}" height="34px"></a>
 
                 <a class="login-text" href="">Войти</a>
             </div>
@@ -41,7 +41,7 @@
             <div class="left-part">
                 <div class="image-container">
                     {% if images %}
-                     <img src="{{ images.0.image }}" class="image">
+                     <img src="{% static images.0.image %}" class="image">
                     {% endif %}
 
                     <div class="overlay">
@@ -58,7 +58,7 @@
             <div class="right-part">
                 <h2>{{ product.name }}</h2>
                 <p>{{ product.desc }}</p>
-                <p class="price">{{ product.price }}</p>
+                <p class="price">{{ product.price }}$</p>
                 <div class="size">
                     <p>Размер:</p>
                     <ul class="nav-list">
@@ -68,7 +68,7 @@
                 </div>
                 <div class="buy">
                     <div class="buy-text">Положить в корзину</div>
-                    <img src="../static/cart.png" class="icon" width="35px" height="35px">
+                    <img src="{% static 'cart.png' %}" class="icon" width="35px" height="35px">
                 </div>
             </div>
         </div>
@@ -80,10 +80,10 @@
                 {% for item in similar %}
                 <a href="{% url 'product' item.id %}">
                 <div class="product">
-                    <img src="{{ item.product_image_set.first.image }}" alt="{{ item.name }}">
+                    <img src="{% static item.product_image_set.first.image %}" alt="{{ item.name }}">
                     <div class="product-info">
                         <p>{{ item.name }}</p>
-                        <div class="price">{{ item.price }}</div>
+                        <div class="price">{{ item.price }}$</div>
                     </div>
                 </div>
                 </a>
