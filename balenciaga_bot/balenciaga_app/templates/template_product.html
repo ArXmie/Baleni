@@ -33,8 +33,9 @@
     <main class="main-outline">
         <div class="path">
             <ul class="nav-list">
-                <li>Каталог</li>
-                <li>Название продукта</li>
+                <li><a class="catalog-text" href="{% url 'home' %}">Каталог</a></li>
+                <li>{{ product.category.category }}</li>
+                <li>{{ product.name }}</li>
             </ul>
         </div>
         <div class="product-template">
@@ -57,13 +58,16 @@
             </div>
             <div class="right-part">
                 <h2>{{ product.name }}</h2>
-                <p>{{ product.desc }}</p>
+                <p>{{ product.desc|linebreaks }}</p>
                 <p class="price">{{ product.price }}$</p>
                 <div class="size">
                     <p>Размер:</p>
                     <ul class="nav-list">
-                        <li class="size-li">S</li>
-                        <li class="size-li">M</li>
+                        {% for size_product in product.size_product_set.all %}
+                            <li class="size-li">{{ size_product.size.size }}</li>
+                        {% empty %}
+                            <p>Нету размеров</p>
+                        {% endfor %}
                     </ul>
                 </div>
                 <div class="buy">
@@ -88,7 +92,7 @@
                 </div>
                 </a>
                 {% empty %}
-                    <p>Нет похожих товаров.</p>
+                    <p class="error-similar">Нет похожих товаров.</p>
                 {% endfor %}
             </div>
         </div>

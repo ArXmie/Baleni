@@ -46,11 +46,13 @@ def template_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     images = Product_Image.objects.filter(product=product)
     similar = Product.objects.filter(category=product.category).exclude(id=product_id)[:3]
+    size = Size_Product.objects.filter(product=product)
 
     context = {
         'product': product,
         'images': images,
         'similar': similar,
+        'sizes': size,
     }
     return render(request, "template_product.html", context)
 
