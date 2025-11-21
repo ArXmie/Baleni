@@ -56,3 +56,6 @@ def template_product(request, product_id):
     }
     return render(request, "template_product.html", context)
 
+def search(request):
+    return render(request, "search.html")
+

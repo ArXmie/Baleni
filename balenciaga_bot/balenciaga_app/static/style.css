@@ -424,6 +424,63 @@
     padding-left: 50px;
   }
 
+  .objects {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+    gap: 10px;
+  }
 
+  .object {
+    max-width: 817px;
+    display: flex;
+    flex-direction: row;
+    gap: 143px;
+    padding: 20px;
+    align-items: center;
+  }
 
+  .object-img {
+    max-height: 41px;
+  }
+
+  .object-info {
+    display: flex;
+    align-items: center;
+    gap: 70px;
+    width: 373px;
+  }
+
+  .object-name {
+    text-align: left;
+    align-items: center;
+  }
+
+  .flex-price {
+    display: flex;
+    width: 248px;
+    justify-content: flex-end;
+  }
+
+  .flex-price .price {
+    font-size: 20px;
+    color: #ff008c;
+  }
+
+  .search-section {
+    margin: 18px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px
+  }
+
+  .search-box input {
+    width: 100%;
+  }
+
+  .search-button {
+    position: relative;
+    right: 42px;
+  }
   

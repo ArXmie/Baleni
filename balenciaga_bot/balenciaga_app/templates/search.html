@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Мэйнстрим</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="div-width">
+      <img src="{% static 'balenciaga-banner.png' %}" alt="banner">
+    </div>  
+    <header class="site-header">
+        <div class="container">
+            <div class="header-row">
+              <div class="catalog">
+                <a class="catalog-text" href="{% url 'home' %}">Каталог</a>
+              </div>
+              
+        <div class="logo">
+            <img src="{% static 'logo.svg' %}" alt="Логотип сайта">
+        </div>
+
+        <div class="actions">
+          <a height="34px" href="" class="search"><img src="{% static 'search.png' %}" height="34px"></a>
+
+          <a class="login-text" href="">Войти</a>
+        </div>
+
+        </div>
+      </div>
+    </header>  
+    <main class="main-outline">
+        <h1 style="font-size:48px; margin: 22px 0 22px 18px; font-weight: 10;">ПОИСК</h1>
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" placeholder="Поиск">
+                <button class="search-button"><img src="{% static 'search2.png' %}" height="20px"></button>
+            </div>
+            <div class="filter">
+                <button class="filter-btn">
+                    <img src="{% static 'filter.png' %}" height="20px">
+                </button>
+            </div>
+        </div>
+        <div class="objects">
+                <button class="object-btn">
+                    <div class="object">
+                        <div class="object-info">
+                            <img class="object-img" src="{% static 'Men-Track-Trail-Laces-Sneaker.webp' %}">
+                            <div class="object-name">Men's Track Trail Laces Sneaker</div>
+                        </div>
+                        <div class="flex-price">
+                            <div class="price">599.99$</div>
+                        </div>
+                    </div>
+                </button>
+                <button class="object-btn">
+                    <div class="object">
+                        <div class="object-info">
+                            <img class="object-img" src="{% static 'Men-Track-Trail-Laces-Sneaker.webp' %}">
+                            <div class="object-name">Men's Track Trail Laces Sneaker</div>
+                        </div>
+                        <div class="flex-price">
+                            <div class="price">599.99$</div>
+                        </div>
+                    </div>
+                </button>
+        </div>
+        <div id="filterModal" class="modal">
+            <div class="modal-content">
+                <p>Фильтры</p>
+                <label><input type="checkbox"> По убыванию</label>
+                <label><input type="checkbox"> По возрастанию</label>
+            </div>
+        </div>
+    </main>
+    <footer class="footer-1">
+        
+    </footer>  
+</body>
+</html>

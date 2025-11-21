@@ -7,5 +7,6 @@ urlpatterns = [
     path('umnoj', umnoj),
     path('delenie', delenie),
     path('', index, name='home'),
+    path('search/', search, name='search'),
     path('product/<int:product_id>/', template_product, name='product')
 ]
