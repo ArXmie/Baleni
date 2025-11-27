@@ -475,12 +475,35 @@
     gap: 10px
   }
 
-  .search-box input {
-    width: 100%;
+  .search-box {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 250px;
   }
 
-  .search-button {
+  .search-box input {
+    width: 78%;
+  }
+
+  .modal {
+    display: none;
     position: relative;
-    right: 42px;
+    z-index: 1000;
+    left: 279px;
+    top: -237px;
+    width: 100px;
+    height: 300px;
+  }
+
+  .modal-content {
+    position: relative;
+    background: white;
+    margin: 1% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 500px;
+    outline: thin solid rgb(0, 0, 0);
+    box-shadow: 1px 6px 8px rgb(102, 102, 102);
   }
   

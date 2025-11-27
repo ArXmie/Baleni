@@ -4,8 +4,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Мэйнстрим</title>
+  <title>Поиск СВАГИ {% if query %} - {{ query }}{% endif %}</title>
   <link rel="stylesheet" href="{% static 'style.css' %}">
+
 </head>
 <body>
     <div class="div-width">
@@ -35,49 +36,58 @@
         <h1 style="font-size:48px; margin: 22px 0 22px 18px; font-weight: 10;">ПОИСК</h1>
         <div class="search-section">
             <div class="search-box">
-                <input type="text" placeholder="Поиск">
-                <button class="search-button"><img src="{% static 'search2.png' %}" height="20px"></button>
+                <input type="text" id="searchInput" placeholder="Поиск" value="{{ query }}">
+                <button id="searchBtn" class="search-button"><img src="{% static 'search2.png' %}" height="20px"></button>
             </div>
             <div class="filter">
-                <button class="filter-btn">
+                <button id="openFilterBtn" class="filter-btn">
                     <img src="{% static 'filter.png' %}" height="20px">
                 </button>
             </div>
         </div>
         <div class="objects">
+            {% if products %}
+                {% for item in products %}
                 <button class="object-btn">
+                    <a href="{% url 'product' item.product.id %}" style="text-decoration: none; color: inherit;">
                     <div class="object">
                         <div class="object-info">
+                            {% if item.image %}
                             <img class="object-img" src="{% static 'Men-Track-Trail-Laces-Sneaker.webp' %}">
-                            <div class="object-name">Men's Track Trail Laces Sneaker</div>
+                            {% else %}
+                            <p> ничего </p>
+                            {% endif %}
+                            <div class="object-name">{{ item.product.name }}</div>
                         </div>
                         <div class="flex-price">
-                            <div class="price">599.99$</div>
+                            <div class="price">{{ item.product.price }}$</div>
                         </div>
                     </div>
+                    </a>
                 </button>
-                <button class="object-btn">
-                    <div class="object">
-                        <div class="object-info">
-                            <img class="object-img" src="{% static 'Men-Track-Trail-Laces-Sneaker.webp' %}">
-                            <div class="object-name">Men's Track Trail Laces Sneaker</div>
-                        </div>
-                        <div class="flex-price">
-                            <div class="price">599.99$</div>
-                        </div>
-                    </div>
-                </button>
+                {% endfor %}
+            {% elif not query %}
+                <p>Того товара нет, к сожалению</p>
+            {% endif %}
         </div>
         <div id="filterModal" class="modal">
-            <div class="modal-content">
-                <p>Фильтры</p>
-                <label><input type="checkbox"> По убыванию</label>
-                <label><input type="checkbox"> По возрастанию</label>
+        <div class="modal-content">
+            <p>Фильтры</p>
+            
+            <label><input type="checkbox"> По убыванию</label>
+            <label><input type="checkbox"> По возрастанию</label>
+
+            <div style="margin-top: 15px;">
+                <label>Цена от: <input type="number" id="priceFrom" name="price_from" placeholder="0" value="{{ price_from }}"></label><br>
+                <label>Цена до: <input type="number" id="priceTo" name="price_to" placeholder="100000000" value="{{ price_to }}"></label><br>
             </div>
+            <button id="applyBtn">Применить</button>
         </div>
+    </div>  
     </main>
     <footer class="footer-1">
         
-    </footer>  
+    </footer>
+    <script src="{% static 'filter.js' %}"></script>
 </body>
 </html>

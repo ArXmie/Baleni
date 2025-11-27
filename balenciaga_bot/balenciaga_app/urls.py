@@ -8,5 +8,6 @@ urlpatterns = [
     path('delenie', delenie),
     path('', index, name='home'),
     path('search/', search, name='search'),
+    path('api/search/', search_api, name='api_search'),
     path('product/<int:product_id>/', template_product, name='product')
 ]

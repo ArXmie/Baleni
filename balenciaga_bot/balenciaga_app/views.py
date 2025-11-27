@@ -1,4 +1,6 @@
 from django.shortcuts import render, HttpResponse, get_object_or_404
+from django.http import JsonResponse
+from django.db.models import Q
 from .models import *
 
 # Create your views here.
@@ -57,5 +59,62 @@ def template_product(request, product_id):
     return render(request, "template_product.html", context)
 
 def search(request):
-    return render(request, "search.html")
+    query = request.GET.get('q', '').strip()
+    price_from = request.GET.get('price_from', '')
+    price_to = request.GET.get('price_to', '')
 
+    products = Product.objects.all()
+
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+            )
+        
+    if price_from:
+        products = products.filter(price__gte=float(price_from))
+    if price_to:
+        products = products.filter(price__lte=float(price_to))
+
+    products_with_images = []
+    for product in products:
+        first_image = Product_Image.objects.filter(product=product).first()
+        products_with_images.append({
+            'product': product,
+            'image': first_image
+        })
+
+    context = {
+        'query': query,
+        'products': products_with_images,
+        'count': products.count(),
+        'price_from': price_from,
+        'price_to': price_to
+    }
+    return render(request, "search.html", context)
+
+def search_api(request):
+    """API для AJAX автодополнения"""
+    query = request.GET.get('q', '').strip()
+    
+    if len(query) < 2:
+        return JsonResponse({'results': []})
+    
+    # Поиск товаров
+    products = Product.objects.filter(
+        Q(name__icontains=query) | 
+        Q(description__icontains=query)
+    )[:10]
+    
+    results = []
+    for product in products:
+        first_image = Product_Image.objects.filter(product=product).first()
+        
+        results.append({
+            'id': product.id,
+            'name': product.name,
+            'price': str(product.price),
+            'image': first_image.image if first_image else None,
+            'url': f'/product/{product.id}/'
+        })
+    
+    return JsonResponse({'results': results})
