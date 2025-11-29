@@ -9,19 +9,24 @@ const priceTo = document.getElementById('priceTo');
 openBtn.addEventListener('click', function() {
     if (modal.style.display === 'block') {
         modal.style.display = 'none';
-        document.body.style.overflow = '';
     } else {
         modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
     }
 });
 
 window.addEventListener('click', function(event) {
     if (event.target === modal) {
         modal.style.display = 'none';
-        document.body.style.overflow = '';
     }
 });
+
+function getSearchUrl() {
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/balenciaga/')) {
+        return '/balenciaga/search/';
+    }
+    return '/search/';
+}
 
 // Применение фильтров
 applyBtn.addEventListener('click', function() {
@@ -29,18 +34,18 @@ applyBtn.addEventListener('click', function() {
     const priceFromValue = priceFrom.value;
     const priceToValue = priceTo.value;
     
-    // Формируем URL
-    let url = '/search/';
+    // ИСПРАВЛЕНО: используем динамический путь
+    let url = getSearchUrl();
     const params = [];
     
     if (query) {
-        params.push(q=${encodeURIComponent(query)});
+        params.push(`q=${encodeURIComponent(query)}`);
     }
     if (priceFromValue) {
-        params.push(price_from=${priceFromValue});
+        params.push(`price_from=${priceFromValue}`);
     }
     if (priceToValue) {
-        params.push(price_to=${priceToValue});
+        params.push(`price_to=${priceToValue}`);
     }
     
     if (params.length > 0) {
@@ -63,13 +68,14 @@ function performSearch() {
     const priceFromValue = priceFrom ? priceFrom.value : '';
     const priceToValue = priceTo ? priceTo.value : '';
     
-    let url = /search/?q=${encodeURIComponent(query)};
+    // ИСПРАВЛЕНО: используем динамический путь
+    let url = `${getSearchUrl()}?q=${encodeURIComponent(query)}`;
     
     if (priceFromValue) {
-        url += &price_from=${priceFromValue};
+        url += `&price_from=${priceFromValue}`;
     }
     if (priceToValue) {
-        url += &price_to=${priceToValue};
+        url += `&price_to=${priceToValue}`;
     }
     
     window.location.href = url;

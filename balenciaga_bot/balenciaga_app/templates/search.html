@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Поиск СВАГИ {% if query %} - {{ query }}{% endif %}</title>
   <link rel="stylesheet" href="{% static 'style.css' %}">
-
 </head>
 <body>
     <div class="div-width">
@@ -24,8 +23,8 @@
         </div>
 
         <div class="actions">
-          <a height="34px" href="" class="search"><img src="{% static 'search.png' %}" height="34px"></a>
-
+          <!-- ИСПРАВЛЕНО: добавлен url -->
+          <a height="34px" href="{% url 'search' %}" class="search"><img src="{% static 'search.png' %}" height="34px"></a>
           <a class="login-text" href="">Войти</a>
         </div>
 
@@ -34,56 +33,70 @@
     </header>  
     <main class="main-outline">
         <h1 style="font-size:48px; margin: 22px 0 22px 18px; font-weight: 10;">ПОИСК</h1>
+        
+        {% if query %}
+        <div style="margin: 0 18px 20px 18px;">
+            <p style="font-size: 18px; color: #666;">
+                {% if count > 0 %}
+                    Найдено товаров: <strong>{{ count }}</strong>
+                {% else %}
+                    По запросу "<strong>{{ query }}</strong>" ничего не найдено
+                {% endif %}
+            </p>
+        </div>
+        {% endif %}
+        
         <div class="search-section">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Поиск" value="{{ query }}">
-                <button id="searchBtn" class="search-button"><img src="{% static 'search2.png' %}" height="20px"></button>
+                <button type="button" id="searchBtn" class="search-button">
+                    <img src="{% static 'search2.png' %}" height="20px">
+                </button>
             </div>
             <div class="filter">
-                <button id="openFilterBtn" class="filter-btn">
+                <button type="button" id="openFilterBtn" class="filter-btn">
                     <img src="{% static 'filter.png' %}" height="20px">
                 </button>
             </div>
         </div>
+        <div id="filterModal" class="modal">
+            <div class="modal-content">
+                <p >Фильтры</p>
+    
+                <div style="margin-top: 15px;">
+                    <label>Цена от: <input type="number" id="priceFrom" name="price_from" placeholder="0" value="{{ price_from }}"></label><br>
+                    <label>Цена до: <input type="number" id="priceTo" name="price_to" placeholder="100000000" value="{{ price_to }}"></label><br>
+                </div>
+                <button type="button" id="applyBtn" style="margin-top: 15px;">Применить</button>
+            </div>
+        </div>  
         <div class="objects">
             {% if products %}
                 {% for item in products %}
-                <button class="object-btn">
-                    <a href="{% url 'product' item.product.id %}" style="text-decoration: none; color: inherit;">
-                    <div class="object">
-                        <div class="object-info">
-                            {% if item.image %}
-                            <img class="object-img" src="{% static 'Men-Track-Trail-Laces-Sneaker.webp' %}">
-                            {% else %}
-                            <p> ничего </p>
-                            {% endif %}
-                            <div class="object-name">{{ item.product.name }}</div>
+                <a href="{% url 'product' item.product.id %}" style="text-decoration: none; color: inherit;">
+                    <button type="button" class="object-btn">
+                        <div class="object">
+                            <div class="object-info">
+                                {% if item.image %}
+                                    <img class="object-img" src="{% static item.image.image %}" alt="{{ item.product.name }}">
+                                {% else %}
+                                    <img class="object-img" src="{% static 'Men-Track-Trail-Laces-Sneaker.webp' %}" alt="Нет фото">
+                                {% endif %}
+                                <div class="object-name">{{ item.product.name }}</div>
+                            </div>
+                            <div class="flex-price">
+                                <div class="price">{{ item.product.price }}$</div>
+                            </div>
                         </div>
-                        <div class="flex-price">
-                            <div class="price">{{ item.product.price }}$</div>
-                        </div>
-                    </div>
-                    </a>
-                </button>
+                    </button>
+                </a>
                 {% endfor %}
-            {% elif not query %}
-                <p>Того товара нет, к сожалению</p>
+            {% elif query %}
+                <p style="margin-left: 18px;">По запросу "{{ query }}" товары не найдены</p>
+            {% else %}
+                <p style="margin-left: 18px;">Введите запрос для поиска товаров</p>
             {% endif %}
         </div>
-        <div id="filterModal" class="modal">
-        <div class="modal-content">
-            <p>Фильтры</p>
-            
-            <label><input type="checkbox"> По убыванию</label>
-            <label><input type="checkbox"> По возрастанию</label>
-
-            <div style="margin-top: 15px;">
-                <label>Цена от: <input type="number" id="priceFrom" name="price_from" placeholder="0" value="{{ price_from }}"></label><br>
-                <label>Цена до: <input type="number" id="priceTo" name="price_to" placeholder="100000000" value="{{ price_to }}"></label><br>
-            </div>
-            <button id="applyBtn">Применить</button>
-        </div>
-    </div>  
     </main>
     <footer class="footer-1">
         

@@ -67,13 +67,20 @@ def search(request):
 
     if query:
         products = products.filter(
-            Q(name__icontains=query) | Q(description__icontains=query)
-            )
-        
+            Q(name__icontains=query) | Q(desc__icontains=query)
+        )
+    
     if price_from:
-        products = products.filter(price__gte=float(price_from))
+        try:
+            products = products.filter(price__gte=float(price_from))
+        except ValueError:
+            pass
+    
     if price_to:
-        products = products.filter(price__lte=float(price_to))
+        try:
+            products = products.filter(price__lte=float(price_to))
+        except ValueError:
+            pass
 
     products_with_images = []
     for product in products:
@@ -91,30 +98,3 @@ def search(request):
         'price_to': price_to
     }
     return render(request, "search.html", context)
-
-def search_api(request):
-    """API для AJAX автодополнения"""
-    query = request.GET.get('q', '').strip()
-    
-    if len(query) < 2:
-        return JsonResponse({'results': []})
-    
-    # Поиск товаров
-    products = Product.objects.filter(
-        Q(name__icontains=query) | 
-        Q(description__icontains=query)
-    )[:10]
-    
-    results = []
-    for product in products:
-        first_image = Product_Image.objects.filter(product=product).first()
-        
-        results.append({
-            'id': product.id,
-            'name': product.name,
-            'price': str(product.price),
-            'image': first_image.image if first_image else None,
-            'url': f'/product/{product.id}/'
-        })
-    
-    return JsonResponse({'results': results})
