@@ -7,6 +7,7 @@
   <title>Мэйнстрим</title>
   <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
+<script src="{% static 'dropdown.js' %}"></script>
 <body>
     <div class="div-width">
       <img src="{% static 'balenciaga-banner.png' %}" alt="banner">
@@ -15,7 +16,11 @@
         <div class="container">
             <div class="header-row">
                 <div class="catalog">
-                    <a class="catalog-text" href="{% url 'home' %}">Каталог</a>
+                    {% if request.session.user_id %}
+                        <a class="catalog-text" href="{% url 'catalog_logged' %}">Каталог</a>
+                    {% else %}
+                        <a class="catalog-text" href="{% url 'home' %}">Каталог</a>
+                    {% endif %}
                 </div>
                 
                 <div class="logo">
@@ -25,7 +30,23 @@
                 <div class="actions">
                 <a height="34px" href="{% url 'search' %}" class="search"><img src="{% static 'search.png' %}" height="34px"></a>
 
-                <a class="login-text" href="">Войти</a>
+                {% if request.session.user_id %}
+                    <div class="user-info">
+                    <span class="user-nickname">{{ request.session.nickname }}</span>
+                    <img
+                        class="user-avatar"
+                        src="{% static 'default-avatar-icon-of-social-media-user-vector.jpg' %}"
+                        alt="avatar"
+                        onclick="toggleDropdown()"
+                    />
+                    <div class="dropdown" id="dropdown">
+                        <a href="#">Профиль</a>
+                        <a href="{% url 'logout' %}">Выйти</a>
+                    </div>
+                    </div>
+                {% else %}
+                    <a class="login-text" href="{% url 'login' %}">Войти</a>
+                {% endif %}
             </div>
 
         </div>

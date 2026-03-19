@@ -8,7 +8,7 @@ def make_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 def check_password(password, hashed):
-    return hashlib.sha256(password.encode()).hexdigest == hashed
+    return hashlib.sha256(password.encode()).hexdigest() == hashed
 
 def root(request):
     first_compoud = float(request.GET.get('a', 0))
@@ -103,6 +103,65 @@ def search(request):
     }
     return render(request, "search.html", context)
 
+def search_logged(request):
+    query = request.GET.get('q', '').strip()
+    price_from = request.GET.get('price_from', '')
+    price_to = request.GET.get('price_to', '')
+
+    products = Product.objects.all()
+
+    if query:
+        products = products.filter(
+            Q(name__icontains=query) | Q(desc__icontains=query)
+        )
+    
+    if price_from:
+        try:
+            products = products.filter(price__gte=float(price_from))
+        except ValueError:
+            pass
+    
+    if price_to:
+        try:
+            products = products.filter(price__lte=float(price_to))
+        except ValueError:
+            pass
+
+    products_with_images = []
+    for product in products:
+        first_image = Product_Image.objects.filter(product=product).first()
+        products_with_images.append({
+            'product': product,
+            'image': first_image
+        })
+
+    context = {
+        'query': query,
+        'products': products_with_images,
+        'count': products.count(),
+        'price_from': price_from,
+        'price_to': price_to,
+        'nickname': request.session.get('nickname'),
+    }
+    return render(request, "search-logged.html", context)
+
+def catalog_logged(request):
+    if not request.session.get('user_id'):
+        return redirect('login')
+    
+    categories = Category.objects.all()
+    data = []
+
+    for category in categories:
+        products = category.product_set.all()[:2]
+        data.append({'category': category, 'products': products})
+    images = Product_Image.objects.all()
+
+    return render(request, 'main-catalog-logged.html', {
+        'data': data, 
+        'nickname': request.session.get('nickname'),
+    })
+
 
 def login_view(request):
     if request.method == 'POST':
@@ -114,9 +173,7 @@ def login_view(request):
             if check_password(password, user.password):
                 request.session['user_id'] = user.id
                 request.session['nickname'] = user.nickname
-                if user.avatar:
-                    request.session['avatar'] = user.avatar.url
-                return redirect('catalog')
+                return redirect('catalog_logged')
             else:
                 return render(request, 'login.html', {'error': 'Неверный пароль'})
         except User.DoesNotExist:
@@ -152,9 +209,10 @@ def register_view(request):
         )
         request.session['user_id'] = user.id
         request.session['nickname'] = user.nickname
-        return redirect('catalog')
+        return redirect('catalog_logged')
 
     return render(request, 'register.html')
+    
 
 def logout_view(request):
     request.session.flush()

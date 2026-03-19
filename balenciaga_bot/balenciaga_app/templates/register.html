@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Balenciaga - Регистрация</title>
+  <title>Регистрация В СВАГУ</title>
   <link rel="stylesheet" href="../static/style.css" />
 </head>
 <body>
 
 <div class="wrapper">
-  <div class="header">
-    <a href="" class="logo">Balenciaga</a>
-  </div>
 
   <div class="card">
+    <div class="logo" style="margin-bottom: 48px;">
+      <img src="../static/logo.svg" alt="Логотип сайта">
+    </div>
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       <h2>Регистрация</h2>
