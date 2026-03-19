@@ -505,3 +505,180 @@
     box-shadow: 1px 6px 8px rgb(102, 102, 102);
   }
   
+  .wrapper {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 36px 40px 44px;
+}
+
+.card h2 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  color: #000;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+.field input {
+  width: 100%;
+  border: 1px solid #000;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  background: #fff;
+  color: #000;
+}
+
+.field input:focus {
+  border-color: #555;
+}
+
+.submit-btn {
+  width: 100%;
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  padding: 11px;
+  font-size: 13px;
+  font-family: inherit;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.submit-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+.register-link,
+.login-link {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #555;
+  text-align: center;
+}
+
+.register-link a,
+.login-link a {
+  color: #000;
+  text-decoration: underline;
+}
+
+.avatar-section {
+  margin-bottom: 18px;
+}
+
+.avatar-section .label-text {
+  display: block;
+  font-size: 13px;
+  color: #000;
+  margin-bottom: 8px;
+}
+
+.avatar-upload-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar-preview {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatar-btn {
+  font-size: 12px;
+  font-family: inherit;
+  color: #000;
+  background: #fff;
+  border: 1px solid #000;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.avatar-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+.user-nickname {
+  font-size: 13px;
+  color: #000;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 42px;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  min-width: 140px;
+  z-index: 100;
+  flex-direction: column;
+}
+
+.dropdown.open {
+  display: flex;
+}
+
+.dropdown a {
+  font-size: 12px;
+  color: #000;
+  text-decoration: none;
+  padding: 10px 14px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown a:last-child {
+  border-bottom: none;
+}
+
+.dropdown a:hover {
+  background: #f5f5f5;
+}
+
+.user-info {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

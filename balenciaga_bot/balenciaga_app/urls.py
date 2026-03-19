@@ -8,5 +8,8 @@ urlpatterns = [
     path('delenie', delenie),
     path('', index, name='home'),
     path('search/', search, name='search'),
-    path('product/<int:product_id>/', template_product, name='product')
+    path('product/<int:product_id>/', template_product, name='product'),
+    path('login/', login_view, name='login'),
+    path('register/', register_view, name='register'),
+    path('logout/', logout_view, name='logout')
 ]

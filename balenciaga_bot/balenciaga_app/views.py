@@ -1,11 +1,15 @@
-from django.shortcuts import render, HttpResponse, get_object_or_404
+from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
+import hashlib
 from django.http import JsonResponse
 from django.db.models import Q
 from .models import *
 
-# Create your views here.
+def make_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
-# 127.0.0.1:8000/mul/?a=5&b=5
+def check_password(password, hashed):
+    return hashlib.sha256(password.encode()).hexdigest == hashed
+
 def root(request):
     first_compoud = float(request.GET.get('a', 0))
     second_compoud = float(request.GET.get('b', 0))
@@ -98,3 +102,64 @@ def search(request):
         'price_to': price_to
     }
     return render(request, "search.html", context)
+
+
+def login_view(request):
+    if request.method == 'POST':
+        nickname = request.POST.get('nickname')
+        password = request.POST.get('password')
+
+        try:
+            user = User.objects.get(nickname=nickname)
+            if check_password(password, user.password):
+                request.session['user_id'] = user.id
+                request.session['nickname'] = user.nickname
+                if user.avatar:
+                    request.session['avatar'] = user.avatar.url
+                return redirect('catalog')
+            else:
+                return render(request, 'login.html', {'error': 'Неверный пароль'})
+        except User.DoesNotExist:
+            return render(request, 'login.html', {'error': 'Пользователь не найден'})
+
+    return render(request, 'login.html')
+
+def register_view(request):
+    if request.method == 'POST':
+        nickname = request.POST.get('nickname')
+        email = request.POST.get('email')
+        telephone = request.POST.get('telephone')
+        password = request.POST.get('password')
+        password2 = request.POST.get('password2')
+        avatar = request.FILES.get('avatar')
+
+        if password != password2:
+            return render(request, 'register.html', {'error': 'Пароли не совпадают'})
+
+        if len(password) < 6:
+            return render(request, 'register.html', {'error': 'Пароль минимум 6 символов'})
+
+        if User.objects.filter(nickname=nickname).exists():
+            return render(request, 'register.html', {'error': 'Никнейм уже занят'})
+
+        if User.objects.filter(email=email).exists():
+            return render(request, 'register.html', {'error': 'Email уже используется'})
+
+        user = User.objects.create(
+            nickname=nickname,
+            email=email,
+            telephone=telephone,
+            password=make_password(password),
+            avatar=avatar
+        )
+        request.session['user_id'] = user.id
+        request.session['nickname'] = user.nickname
+        if user.avatar:
+            request.session['avatar'] = user.avatar.url
+        return redirect('catalog')
+
+    return render(request, 'register.html')
+
+def logout_view(request):
+    request.session.flush()
+    return redirect('login')

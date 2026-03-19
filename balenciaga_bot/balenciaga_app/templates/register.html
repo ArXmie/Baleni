@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Balenciaga - Регистрация</title>
+  <link rel="stylesheet" href="../static/style.css" />
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="header">
+    <a href="{% url 'catalog' %}" class="logo">Balenciaga</a>
+  </div>
+
+  <div class="card">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <h2>Регистрация</h2>
+
+      {% if error %}
+        <p class="form-error">{{ error }}</p>
+      {% endif %}
+
+      <div class="field">
+        <label>Никнейм</label>
+        <input type="text" name="nickname" placeholder="nickname" required />
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="email@example.com" required />
+      </div>
+
+      <div class="field">
+        <label>Телефон</label>
+        <input type="text" name="telephone" placeholder="+7 999 999 99 99" required />
+      </div>
+
+      <div class="field">
+        <label>Пароль</label>
+        <input type="password" name="password" placeholder="••••••••" required />
+      </div>
+
+      <div class="field">
+        <label>Повторите пароль</label>
+        <input type="password" name="password2" placeholder="••••••••" required />
+      </div>
+
+      <div class="avatar-section">
+        <span class="label-text">Аватарка</span>
+        <div class="avatar-upload-area">
+          <img id="avatarPreview" class="avatar-preview"
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 52 52'%3E%3Ccircle cx='26' cy='26' r='26' fill='%23ddd'/%3E%3Ccircle cx='26' cy='20' r='10' fill='%23aaa'/%3E%3Cellipse cx='26' cy='40' rx='16' ry='10' fill='%23aaa'/%3E%3C/svg%3E"
+            alt="avatar" />
+          <button type="button" class="avatar-btn"
+            onclick="document.getElementById('avatarInput').click()">Выбрать фото</button>
+          <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display:none" />
+        </div>
+      </div>
+
+      <button class="submit-btn" type="submit">Зарегистрироваться</button>
+      <p class="login-link">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+    </form>
+  </div>
+
+  <div class="footer-bar"></div>
+</div>
+
+<script>
+  document.getElementById('avatarInput').addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => document.getElementById('avatarPreview').src = e.target.result;
+    reader.readAsDataURL(file);
+  });
+</script>
+
+</body>
+</html>
