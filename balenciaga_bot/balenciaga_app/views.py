@@ -131,7 +131,6 @@ def register_view(request):
         telephone = request.POST.get('telephone')
         password = request.POST.get('password')
         password2 = request.POST.get('password2')
-        avatar = request.FILES.get('avatar')
 
         if password != password2:
             return render(request, 'register.html', {'error': 'Пароли не совпадают'})
@@ -150,12 +149,9 @@ def register_view(request):
             email=email,
             telephone=telephone,
             password=make_password(password),
-            avatar=avatar
         )
         request.session['user_id'] = user.id
         request.session['nickname'] = user.nickname
-        if user.avatar:
-            request.session['avatar'] = user.avatar.url
         return redirect('catalog')
 
     return render(request, 'register.html')
