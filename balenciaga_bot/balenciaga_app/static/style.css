@@ -684,3 +684,75 @@
   align-items: center;
   gap: 8px;
 }
+
+#cube-widget {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 80px;
+      height: 80px;
+      perspective: 200px;
+      z-index: 999;
+    }
+    #cube {
+    position: absolute;
+    right: 540px;       
+    top: 50%;          
+    transform: translateY(-50%); 
+    width: 80px;
+    height: 80px;
+    transform-style: preserve-3d;
+    transform-origin: center center;
+}
+
+#cube .face {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: rgba(216, 28, 191, 0.15);
+    border: 2px solid #760af1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-family: sans-serif;
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: 1px;
+    backface-visibility: visible;
+}
+
+#cube .front  { transform: translateZ(40px); }
+#cube .back   { transform: rotateY(180deg) translateZ(40px); }
+#cube .left   { transform: rotateY(-90deg) translateZ(40px); }
+#cube .right  { transform: rotateY(90deg) translateZ(40px); }
+#cube .top    { transform: rotateX(90deg) translateZ(40px); }
+#cube .bottom { transform: rotateX(-90deg) translateZ(40px); }
+
+    #snow-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 998;
+    }
+
+    .clock {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    #live-clock {
+      font-family: 'Courier New', monospace;
+      font-size: 33px;
+      font-weight: 700;
+      color: #bb1414;
+      margin-right: 14px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      margin: 0;
+    }
+
+    

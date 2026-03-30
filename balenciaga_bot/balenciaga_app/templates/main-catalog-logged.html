@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
+    <canvas id="snow-canvas"></canvas>
     <div class="div-width">
       <img src="../static/balenciaga-banner.png" alt="banner">
     </div>  
@@ -22,6 +23,8 @@
         </div>
 
         <div class="actions">
+
+            
           <a height="34px" href="{% url 'search_logged' %}" class="search"><img src="../static/search.png" height="34px"></a>
 
           <div class="user-info">
@@ -40,6 +43,9 @@
         </div>
 
         </div>
+      </div>
+      <div class="clock">
+        <span id="live-clock">00:00:00</span>
       </div>
     </header>  
     <main class="main-outline">
@@ -69,9 +75,24 @@
         </div>
     </main>
     <footer class="footer-1">
-        
-    </footer>  
+
+    </footer>
+     <div class="cube-container">
+        <div id="cube">
+            <div class="face front">BAL</div>
+            <div class="face back">ENC</div>
+            <div class="face left">IAG</div>
+            <div class="face right">A</div>
+            <div class="face top">©</div>
+            <div class="face bottom">25</div>
+        </div>
+    </div>
+
+      
 
     <script src="../static/dropdown.js"></script>
+    <script src="../static/cube.js"></script>
+    <script src="../static/snow.js"></script>
+    <script src="../static/live-clock.js"></script>
 </body>
 </html>
