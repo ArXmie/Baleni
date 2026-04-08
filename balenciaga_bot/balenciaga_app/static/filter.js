@@ -28,13 +28,11 @@ function getSearchUrl() {
     return '/search/';
 }
 
-// Применение фильтров
 applyBtn.addEventListener('click', function() {
     const query = searchInput.value.trim();
     const priceFromValue = priceFrom.value;
     const priceToValue = priceTo.value;
-    
-    // ИСПРАВЛЕНО: используем динамический путь
+
     let url = getSearchUrl();
     const params = [];
     
@@ -55,7 +53,6 @@ applyBtn.addEventListener('click', function() {
     window.location.href = url;
 });
 
-// Функция поиска
 function performSearch() {
     const query = searchInput.value.trim();
     
@@ -64,11 +61,9 @@ function performSearch() {
         return;
     }
     
-    // Сохраняем фильтры
     const priceFromValue = priceFrom ? priceFrom.value : '';
     const priceToValue = priceTo ? priceTo.value : '';
     
-    // ИСПРАВЛЕНО: используем динамический путь
     let url = `${getSearchUrl()}?q=${encodeURIComponent(query)}`;
     
     if (priceFromValue) {
@@ -81,7 +76,6 @@ function performSearch() {
     window.location.href = url;
 }
 
-// Поиск по кнопке
 if (searchBtn) {
     searchBtn.addEventListener('click', function(e) {
         e.preventDefault();
@@ -89,7 +83,6 @@ if (searchBtn) {
     });
 }
 
-// Поиск по Enter в поле ввода
 if (searchInput) {
     searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
@@ -99,7 +92,6 @@ if (searchInput) {
     });
 }
 
-// Enter в полях фильтров
 if (priceFrom) {
     priceFrom.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
