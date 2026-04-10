@@ -13,5 +13,5 @@ urlpatterns = [
     path('register/', register_view, name='register'),
     path('logout/', logout_view, name='logout'),
     path('catalog-logged/', catalog_logged, name='catalog_logged'),
-    path('search_logged/', search_logged, name='search_logged'),
+    path('search_logged/', search, name='search_logged'),
 ]

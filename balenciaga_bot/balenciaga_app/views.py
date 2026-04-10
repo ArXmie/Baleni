@@ -101,49 +101,12 @@ def search(request):
         'price_from': price_from,
         'price_to': price_to
     }
-    return render(request, "search.html", context)
-
-def search_logged(request):
-    query = request.GET.get('q', '').strip()
-    price_from = request.GET.get('price_from', '')
-    price_to = request.GET.get('price_to', '')
-
-    products = Product.objects.all()
-
-    if query:
-        products = products.filter(
-            Q(name__icontains=query) | Q(desc__icontains=query)
-        )
     
-    if price_from:
-        try:
-            products = products.filter(price__gte=float(price_from))
-        except ValueError:
-            pass
-    
-    if price_to:
-        try:
-            products = products.filter(price__lte=float(price_to))
-        except ValueError:
-            pass
-
-    products_with_images = []
-    for product in products:
-        first_image = Product_Image.objects.filter(product=product).first()
-        products_with_images.append({
-            'product': product,
-            'image': first_image
-        })
-
-    context = {
-        'query': query,
-        'products': products_with_images,
-        'count': products.count(),
-        'price_from': price_from,
-        'price_to': price_to,
-        'nickname': request.session.get('nickname'),
-    }
-    return render(request, "search-logged.html", context)
+    if request.session.get('user_id'):
+        context['nickname'] = request.session.get('nickname')
+        return render(request, "search-logged.html", context)
+    else:
+        return render(request, "search.html", context)
 
 def catalog_logged(request):
     if not request.session.get('user_id'):
