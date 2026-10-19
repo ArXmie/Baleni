@@ -1,0 +1,1 @@
+function e(){document.querySelectorAll(`.product`).forEach(e=>{e.style.transition=`transform 0.25s ease, box-shadow 0.25s ease`,e.onmouseenter=()=>{e.style.transform=`translateY(-6px) scale(1.03)`,e.style.boxShadow=`0 12px 32px rgba(0,0,0,0.18)`},e.onmouseleave=()=>{e.style.transform=`translateY(0) scale(1)`,e.style.boxShadow=`none`}})}export{e as t};

@@ -57,7 +57,9 @@ ROOT_URLCONF = 'balenciaga_bot.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'static_frontend',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,6 +123,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'balenciaga_app' / 'static',
+    BASE_DIR / 'static_frontend',
 ]
 
 # Default primary key field type
