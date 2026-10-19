@@ -1,0 +1,28 @@
+export function usePricePulse() {
+  if (!document.getElementById('price-pulse-style')) {
+    const style = document.createElement('style')
+    style.id = 'price-pulse-style'
+    style.textContent = `
+      @keyframes pricePulse {
+        0%   { transform: scale(1);    color: inherit; }
+        40%  { transform: scale(1.18); color: #bb1414; }
+        70%  { transform: scale(0.96); color: #bb1414; }
+        100% { transform: scale(1);    color: inherit; }
+      }
+      .price-animated {
+        display: inline-block;
+        animation: pricePulse 0.7s ease forwards;
+      }
+    `
+    document.head.appendChild(style)
+  }
+
+  document.querySelectorAll('.price').forEach((el, i) => {
+    setTimeout(() => {
+      el.classList.add('price-animated')
+      el.addEventListener('animationend', () => {
+        el.classList.remove('price-animated')
+      }, { once: true })
+    }, i * 120)
+  })
+}
