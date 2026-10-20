@@ -20,7 +20,7 @@
         </button>
       </div>
       <div class="filter">
-        <button class="filter-btn" @click="showFilter = true">
+        <button class="filter-btn" @click="showFilter = !showFilter">
           <img src="/static/filter.png" height="20" />
         </button>
       </div>
@@ -59,7 +59,7 @@
         </router-link>
       </template>
       <p v-else-if="hasCriteria">Товары не найдены</p>
-      <p v-else>Введите запрос или задайте фильтры</p>
+      <p v-else>Товаров пока нет</p>
     </div>
   </main>
 </template>
@@ -84,11 +84,6 @@ const hasCriteria = computed(() => !!(route.query.q || route.query.price_from ||
 
 async function fetchProducts() {
   const params = {}
-  if (!hasCriteria.value) {
-    products.value = []
-    count.value = 0
-    return
-  }
   if (query.value) params.search = query.value
   if (priceFrom.value) params.price__gte = priceFrom.value
   if (priceTo.value) params.price__lte = priceTo.value
