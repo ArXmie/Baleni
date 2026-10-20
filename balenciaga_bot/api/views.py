@@ -1,4 +1,9 @@
-from rest_framework import viewsets, filters
+from decimal import Decimal, InvalidOperation
+
+from django.core import signing
+from rest_framework import viewsets, filters, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from balenciaga_app.models import (
     User, Address, Category, Size,
@@ -15,6 +20,23 @@ from .serializers import (
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        nickname = (request.data.get('nickname') or '').strip()
+        if User.objects.filter(nickname__iexact=nickname).exists():
+            return Response({'detail': 'Никнейм уже занят'}, status=status.HTTP_400_BAD_REQUEST)
+        return super().create(request, *args, **kwargs)
+
+    @action(detail=False, methods=['post'], url_path='login')
+    def login(self, request):
+        from balenciaga_app.views import check_password
+        nickname = (request.data.get('nickname') or '').strip()
+        password = request.data.get('password') or ''
+        user = User.objects.filter(nickname=nickname).first()
+        if not user or not check_password(password, user.password):
+            return Response({'detail': 'Неверный логин или пароль'}, status=status.HTTP_401_UNAUTHORIZED)
+        token = signing.dumps({'user_id': user.id})
+        return Response({'user': UserSerializer(user).data, 'token': token})
 
 
 class AddressViewSet(viewsets.ModelViewSet):
@@ -38,6 +60,21 @@ class ProductViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'desc', 'article_number']
     ordering_fields = ['price', 'name', 'amount']
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        params = self.request.query_params
+        for key, lookup in (('price__gte', 'price__gte'), ('price__lte', 'price__lte')):
+            value = params.get(key)
+            if value not in (None, ''):
+                try:
+                    qs = qs.filter(**{lookup: Decimal(value)})
+                except (InvalidOperation, ValueError):
+                    pass
+        category = params.get('category')
+        if category and category.isdigit():
+            qs = qs.filter(category_id=int(category))
+        return qs
 
 
 class ProductImageViewSet(viewsets.ModelViewSet):

@@ -505,6 +505,8 @@
   
 .wrapper {
   margin: 0 auto;
+  min-height: 100vh;
+  justify-content: center;
   max-width: 320px;
   display: flex;
   flex-direction: column;

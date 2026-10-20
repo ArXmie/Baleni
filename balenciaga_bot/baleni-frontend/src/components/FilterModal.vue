@@ -4,10 +4,10 @@
       <p>Фильтры</p>
       <div style="margin-top: 15px">
         <label>Цена от:
-          <input v-model.number="localPriceFrom" type="number" placeholder="0" />
+          <input v-model="localPriceFrom" type="number" min="0" placeholder="0" />
         </label><br />
         <label>Цена до:
-          <input v-model.number="localPriceTo" type="number" placeholder="100000000" />
+          <input v-model="localPriceTo" type="number" min="0" placeholder="100000000" />
         </label>
       </div>
       <button type="button" style="margin-top: 15px" @click="apply">Применить</button>

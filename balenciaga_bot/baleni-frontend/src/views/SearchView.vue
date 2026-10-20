@@ -2,9 +2,9 @@
   <main class="main-outline">
     <h1 class="page-title">ПОИСК</h1>
 
-    <div v-if="query" class="search-info">
+    <div v-if="hasCriteria" class="search-info">
       <p v-if="count > 0">Найдено товаров: <strong>{{ count }}</strong></p>
-      <p v-else>По запросу "<strong>{{ query }}</strong>" ничего не найдено</p>
+      <p v-else>Ничего не найдено</p>
     </div>
 
     <div class="search-section">
@@ -58,14 +58,14 @@
           </button>
         </router-link>
       </template>
-      <p v-else-if="query">По запросу "{{ query }}" товары не найдены</p>
-      <p v-else>Введите запрос для поиска товаров</p>
+      <p v-else-if="hasCriteria">Товары не найдены</p>
+      <p v-else>Введите запрос или задайте фильтры</p>
     </div>
   </main>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { productsApi } from '@/api'
 import FilterModal from '@/components/FilterModal.vue'
@@ -80,34 +80,41 @@ const priceTo = ref(route.query.price_to || '')
 const products = ref([])
 const count = ref(0)
 const showFilter = ref(false)
+const hasCriteria = computed(() => !!(route.query.q || route.query.price_from || route.query.price_to))
 
 async function fetchProducts() {
   const params = {}
+  if (!hasCriteria.value) {
+    products.value = []
+    count.value = 0
+    return
+  }
   if (query.value) params.search = query.value
   if (priceFrom.value) params.price__gte = priceFrom.value
   if (priceTo.value) params.price__lte = priceTo.value
 
-  const { data } = await productsApi.list(params)
-  products.value = data
-  count.value = data.length
+  try {
+    const { data } = await productsApi.list(params)
+    products.value = data
+    count.value = data.length
+  } catch (e) {
+    products.value = []
+    count.value = 0
+  }
   usePricePulse()
 }
 
 function performSearch() {
-  if (!query.value.trim()) {
-    alert('Введите запрос для поиска')
-    return
-  }
   router.push({ name: 'search', query: {
-    q: query.value,
+    q: query.value.trim() || undefined,
     price_from: priceFrom.value || undefined,
     price_to: priceTo.value || undefined,
   }})
 }
 
 function onApplyFilters({ priceFrom: pf, priceTo: pt }) {
-  priceFrom.value = pf
-  priceTo.value = pt
+  priceFrom.value = pf === '' || pf == null ? '' : String(pf)
+  priceTo.value = pt === '' || pt == null ? '' : String(pt)
   performSearch()
 }
 
