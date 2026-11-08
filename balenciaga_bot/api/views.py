@@ -1,12 +1,13 @@
 from decimal import Decimal, InvalidOperation
 
+from django.contrib.auth import authenticate, get_user_model
 from django.core import signing
-from rest_framework import viewsets, filters, status
+from rest_framework import mixins, viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from balenciaga_app.models import (
-    User, Address, Category, Size,
+    Address, Category, Size,
     Product, Product_Image, Size_Product,
     Commission, Commission_Product,
 )
@@ -17,23 +18,32 @@ from .serializers import (
 )
 
 
-class UserViewSet(viewsets.ModelViewSet):
+User = get_user_model()
+
+
+class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    # Только регистрация и вход: список, изменение и удаление пользователей
+    # через открытый API недопустимы (в том числе для администратора).
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def create(self, request, *args, **kwargs):
-        nickname = (request.data.get('nickname') or '').strip()
-        if User.objects.filter(nickname__iexact=nickname).exists():
-            return Response({'detail': 'Никнейм уже занят'}, status=status.HTTP_400_BAD_REQUEST)
-        return super().create(request, *args, **kwargs)
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            errors = serializer.errors
+            first = next(iter(errors.values()))
+            message = first[0] if isinstance(first, list) else str(first)
+            return Response({'detail': str(message), 'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
+        user = serializer.save()
+        token = signing.dumps({'user_id': user.id})
+        return Response({'user': UserSerializer(user).data, 'token': token}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'], url_path='login')
     def login(self, request):
-        from balenciaga_app.views import check_password
         nickname = (request.data.get('nickname') or '').strip()
         password = request.data.get('password') or ''
-        user = User.objects.filter(nickname=nickname).first()
-        if not user or not check_password(password, user.password):
+        user = authenticate(request, username=nickname, password=password)
+        if user is None:
             return Response({'detail': 'Неверный логин или пароль'}, status=status.HTTP_401_UNAUTHORIZED)
         token = signing.dumps({'user_id': user.id})
         return Response({'user': UserSerializer(user).data, 'token': token})

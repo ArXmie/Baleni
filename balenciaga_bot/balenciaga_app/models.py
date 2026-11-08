@@ -1,17 +1,17 @@
+from django.conf import settings
 from django.db import models
 
-class User(models.Model):
-    nickname = models.CharField(max_length=50)
-    email = models.CharField(max_length=100)
-    telephone = models.CharField(max_length=50)
-    password = models.CharField(max_length=100)
+class Profile(models.Model):
+    """Дополнительные данные к встроенной модели пользователя Django."""
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    telephone = models.CharField(max_length=50, blank=True)
 
     class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Профили'
 
     def __str__(self):
-        return self.nickname
+        return self.user.get_username()
 
 class Address(models.Model):
     address = models.CharField(max_length=150)
@@ -85,7 +85,7 @@ class Size_Product(models.Model):
         return sp_name.format(self)
 
 class Commission(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     status = models.CharField(max_length=50)
     total = models.DecimalField(blank=True, null=True, max_digits=10, decimal_places=2)

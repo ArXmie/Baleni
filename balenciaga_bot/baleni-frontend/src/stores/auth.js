@@ -33,14 +33,19 @@ export const useAuthStore = defineStore('auth', () => {
     if (payload.password.length < 6) {
       throw new Error('Пароль минимум 6 символов')
     }
-    const { data } = await usersApi.create({
-      nickname: payload.nickname,
-      email: payload.email,
-      telephone: payload.telephone,
-      password: payload.password,
-    })
-    user.value = data
-    persist()
+    try {
+      const { data } = await usersApi.create({
+        nickname: payload.nickname,
+        email: payload.email,
+        telephone: payload.telephone,
+        password: payload.password,
+      })
+      user.value = data.user
+      token.value = data.token
+      persist()
+    } catch (e) {
+      throw new Error(e.response?.data?.detail || 'Ошибка регистрации')
+    }
   }
 
   function logout() {

@@ -1,14 +1,10 @@
 from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
-import hashlib
+from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.http import JsonResponse
 from django.db.models import Q
 from .models import *
 
-def make_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
-
-def check_password(password, hashed):
-    return hashlib.sha256(password.encode()).hexdigest() == hashed
+User = get_user_model()
 
 def root(request):
     first_compoud = float(request.GET.get('a', 0))
@@ -102,14 +98,14 @@ def search(request):
         'price_to': price_to
     }
     
-    if request.session.get('user_id'):
-        context['nickname'] = request.session.get('nickname')
+    if request.user.is_authenticated:
+        context['nickname'] = request.user.get_username()
         return render(request, "search-logged.html", context)
     else:
         return render(request, "search.html", context)
 
 def catalog_logged(request):
-    if not request.session.get('user_id'):
+    if not request.user.is_authenticated:
         return redirect('login')
     
     categories = Category.objects.all()
@@ -122,25 +118,21 @@ def catalog_logged(request):
 
     return render(request, 'main-catalog-logged.html', {
         'data': data, 
-        'nickname': request.session.get('nickname'),
+        'nickname': request.user.get_username(),
     })
 
 
 def login_view(request):
     if request.method == 'POST':
-        nickname = request.POST.get('nickname')
-        password = request.POST.get('password')
-
-        try:
-            user = User.objects.get(nickname=nickname)
-            if check_password(password, user.password):
-                request.session['user_id'] = user.id
-                request.session['nickname'] = user.nickname
-                return redirect('catalog_logged')
-            else:
-                return render(request, 'login.html', {'error': 'Неверный пароль'})
-        except User.DoesNotExist:
-            return render(request, 'login.html', {'error': 'Пользователь не найден'})
+        user = authenticate(
+            request,
+            username=request.POST.get('nickname'),
+            password=request.POST.get('password'),
+        )
+        if user is not None:
+            login(request, user)
+            return redirect('catalog_logged')
+        return render(request, 'login.html', {'error': 'Неверный логин или пароль'})
 
     return render(request, 'login.html')
 
@@ -158,25 +150,20 @@ def register_view(request):
         if len(password) < 6:
             return render(request, 'register.html', {'error': 'Пароль минимум 6 символов'})
 
-        if User.objects.filter(nickname=nickname).exists():
+        if User.objects.filter(username__iexact=nickname).exists():
             return render(request, 'register.html', {'error': 'Никнейм уже занят'})
 
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email__iexact=email).exists():
             return render(request, 'register.html', {'error': 'Email уже используется'})
 
-        user = User.objects.create(
-            nickname=nickname,
-            email=email,
-            telephone=telephone,
-            password=make_password(password),
-        )
-        request.session['user_id'] = user.id
-        request.session['nickname'] = user.nickname
+        user = User.objects.create_user(username=nickname, email=email, password=password)
+        Profile.objects.create(user=user, telephone=telephone or '')
+        login(request, user)
         return redirect('catalog_logged')
 
     return render(request, 'register.html')
-    
+
 
 def logout_view(request):
-    request.session.flush()
+    logout(request)
     return redirect('login')

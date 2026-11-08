@@ -1,24 +1,60 @@
-from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField
+from django.contrib.auth import get_user_model
+from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField, ValidationError
 
 from balenciaga_app import models
+from balenciaga_app.models import Profile
+
+User = get_user_model()
 
 
 class UserSerializer(ModelSerializer):
+    """Регистрация и данные пользователя на базе встроенной модели django.contrib.auth.User."""
+    nickname = CharField(source='username', max_length=150)
+    telephone = CharField(source='profile.telephone', required=False, allow_blank=True, max_length=50)
+    password = CharField(write_only=True, min_length=6)
+
     class Meta:
-        model = models.User
+        model = User
         fields = ['id', 'nickname', 'email', 'telephone', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+
+    def validate_nickname(self, value):
+        value = value.strip()
+        qs = User.objects.filter(username__iexact=value)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise ValidationError('Никнейм уже занят')
+        return value
+
+    def validate_email(self, value):
+        qs = User.objects.filter(email__iexact=value)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if value and qs.exists():
+            raise ValidationError('Email уже используется')
+        return value
 
     def create(self, validated_data):
-        from balenciaga_app.views import make_password
-        validated_data['password'] = make_password(validated_data['password'])
-        return super().create(validated_data)
+        telephone = validated_data.pop('profile', {}).get('telephone', '')
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            password=validated_data['password'],
+        )
+        Profile.objects.create(user=user, telephone=telephone)
+        return user
 
     def update(self, instance, validated_data):
-        from balenciaga_app.views import make_password
-        if 'password' in validated_data:
-            validated_data['password'] = make_password(validated_data['password'])
-        return super().update(instance, validated_data)
+        profile_data = validated_data.pop('profile', {})
+        password = validated_data.pop('password', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        if 'telephone' in profile_data:
+            Profile.objects.update_or_create(user=instance, defaults={'telephone': profile_data['telephone']})
+        return instance
 
 
 class AddressSerializer(ModelSerializer):
@@ -79,7 +115,7 @@ class CommissionProductSerializer(ModelSerializer):
 
 
 class CommissionSerializer(ModelSerializer):
-    user_nickname = CharField(source='user.nickname', read_only=True)
+    user_nickname = CharField(source='user.username', read_only=True)
     address_text = CharField(source='address.address', read_only=True)
     items = CommissionProductSerializer(source='commission_product_set', many=True, read_only=True)
 
