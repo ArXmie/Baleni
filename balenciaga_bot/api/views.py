@@ -22,8 +22,6 @@ User = get_user_model()
 
 
 class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    # Только регистрация и вход: список, изменение и удаление пользователей
-    # через открытый API недопустимы (в том числе для администратора).
     queryset = User.objects.all()
     serializer_class = UserSerializer
 

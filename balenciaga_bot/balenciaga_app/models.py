@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 
 class Profile(models.Model):
-    """Дополнительные данные к встроенной модели пользователя Django."""
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     telephone = models.CharField(max_length=50, blank=True)
 

@@ -8,7 +8,6 @@ User = get_user_model()
 
 
 class UserSerializer(ModelSerializer):
-    """Регистрация и данные пользователя на базе встроенной модели django.contrib.auth.User."""
     nickname = CharField(source='username', max_length=150)
     telephone = CharField(source='profile.telephone', required=False, allow_blank=True, max_length=50)
     password = CharField(write_only=True, min_length=6)
