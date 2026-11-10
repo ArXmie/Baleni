@@ -57,9 +57,7 @@ ROOT_URLCONF = 'balenciaga_bot.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / 'static_frontend',
-        ],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,7 +121,6 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'balenciaga_app' / 'static',
-    BASE_DIR / 'static_frontend',
 ]
 
 # Default primary key field type
@@ -132,7 +129,6 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# API работает по токену, поэтому сессионная аутентификация (и проверка CSRF) отключена
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [],
 }

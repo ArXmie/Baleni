@@ -13,7 +13,7 @@ def copy_old_users(apps, schema_editor):
         new = AuthUser.objects.create(
             username=old.nickname,
             email=old.email,
-            password='!', 
+            password='!',
         )
         Profile.objects.create(user=new, telephone=old.telephone)
 
