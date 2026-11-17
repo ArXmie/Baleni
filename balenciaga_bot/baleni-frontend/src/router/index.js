@@ -6,6 +6,7 @@ const routes = [
   { path: '/catalog', name: 'catalog', component: () => import('@/views/CatalogView.vue') },
   { path: '/product/:id', name: 'product', component: () => import('@/views/ProductView.vue'), props: true },
   { path: '/search', name: 'search', component: () => import('@/views/SearchView.vue') },
+  { path: '/cart', name: 'cart', component: () => import('@/views/CartView.vue'), meta: { requiresAuth: true } },
   { path: '/login', name: 'login', component: () => import('@/views/LoginView.vue'), meta: { guestOnly: true, standalone: true } },
   { path: '/register', name: 'register', component: () => import('@/views/RegisterView.vue'), meta: { guestOnly: true, standalone: true } },
 ]

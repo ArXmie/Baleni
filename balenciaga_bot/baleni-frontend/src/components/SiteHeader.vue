@@ -21,6 +21,11 @@
             <img src="/static/search.png" height="34" />
           </router-link>
 
+          <router-link :to="{ name: 'cart' }" class="cart-link">
+            <img src="/static/cart.png" alt="Корзина" />
+            <span v-if="cart.count" class="cart-count">{{ cart.count }}</span>
+          </router-link>
+
           <UserMenu v-if="auth.isAuthenticated" />
           <router-link v-else class="login-text" :to="{ name: 'login' }">
             Войти
@@ -33,7 +38,21 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth'
+import { watch } from 'vue'
+import { useCartStore } from '@/stores/cart'
 import UserMenu from './UserMenu.vue'
 
 const auth = useAuthStore()
+const cart = useCartStore()
+
+watch(
+  () => auth.isAuthenticated,
+  (logged) => {
+    if (!logged) return cart.reset()
+    cart.fetch().catch((e) => {
+      if (e.response?.status === 401) auth.logout()
+    })
+  },
+  { immediate: true }
+)
 </script>

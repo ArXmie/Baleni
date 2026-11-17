@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField, ValidationError
+from rest_framework.serializers import (
+    ModelSerializer, CharField, DecimalField, SerializerMethodField, ValidationError,
+)
 
 from balenciaga_app import models
 from balenciaga_app.models import Profile
@@ -124,3 +126,18 @@ class CommissionSerializer(ModelSerializer):
             'id', 'user', 'user_nickname', 'address', 'address_text',
             'status', 'total', 'items',
         ]
+
+
+class CartItemSerializer(ModelSerializer):
+    name = CharField(source='product.name', read_only=True)
+    price = DecimalField(source='product.price', max_digits=10, decimal_places=2, read_only=True)
+    image = SerializerMethodField()
+    size = CharField(source='size.size', read_only=True, default=None)
+
+    def get_image(self, obj):
+        image = obj.product.product_image_set.first()
+        return image.image if image else None
+
+    class Meta:
+        model = models.Cart_Product
+        fields = ['id', 'product', 'name', 'price', 'image', 'size', 'amount']

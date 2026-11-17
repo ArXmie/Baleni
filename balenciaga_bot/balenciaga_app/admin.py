@@ -10,3 +10,6 @@ admin.site.register(Product)
 admin.site.register(Commission)
 admin.site.register(Commission_Product)
 admin.site.register(Product_Image)
+
+admin.site.register(Cart)
+admin.site.register(Cart_Product)

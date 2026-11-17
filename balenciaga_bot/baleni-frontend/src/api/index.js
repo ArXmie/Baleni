@@ -31,6 +31,14 @@ export const sizesApi = {
   list: () => api.get('/sizes/'),
 }
 
+export const cartApi = {
+  get: () => api.get('/cart/'),
+  add: (data) => api.post('/cart/add/', data),
+  setAmount: (id, amount) => api.patch(`/cart-items/${id}/`, { amount }),
+  remove: (id) => api.delete(`/cart-items/${id}/`),
+  clear: () => api.delete('/cart/clear/'),
+}
+
 export const commissionsApi = {
   list: () => api.get('/commissions/'),
   create: (data) => api.post('/commissions/', data),

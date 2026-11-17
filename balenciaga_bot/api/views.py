@@ -4,17 +4,18 @@ from django.contrib.auth import authenticate, get_user_model
 from django.core import signing
 from rest_framework import mixins, viewsets, filters, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from balenciaga_app.models import (
     Address, Category, Size,
     Product, Product_Image, Size_Product,
-    Commission, Commission_Product,
+    Commission, Commission_Product, Cart, Cart_Product,
 )
 from .serializers import (
     UserSerializer, AddressSerializer, CategorySerializer, SizeSerializer,
     ProductSerializer, ProductImageSerializer, SizeProductSerializer,
-    CommissionSerializer, CommissionProductSerializer,
+    CommissionSerializer, CommissionProductSerializer, CartItemSerializer,
 )
 
 
@@ -103,3 +104,87 @@ class CommissionViewSet(viewsets.ModelViewSet):
 class CommissionProductViewSet(viewsets.ModelViewSet):
     queryset = Commission_Product.objects.all()
     serializer_class = CommissionProductSerializer
+
+
+def cart_response(user):
+    cart, _ = Cart.objects.get_or_create(user=user)
+    items = cart.items.select_related('product', 'size').order_by('id')
+    total = sum(i.product.price * i.amount for i in items)
+    return {
+        'id': cart.id,
+        'items': CartItemSerializer(items, many=True).data,
+        'count': sum(i.amount for i in items),
+        'total': str(total),
+    }
+
+
+class CartViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Cart.objects.none()
+
+    def list(self, request):
+        return Response(cart_response(request.user))
+
+    @action(detail=False, methods=['post'], url_path='add')
+    def add(self, request):
+        product = Product.objects.filter(pk=request.data.get('product')).first()
+        if product is None:
+            return Response({'detail': 'Товар не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            amount = int(request.data.get('amount', 1))
+        except (TypeError, ValueError):
+            amount = 0
+        if amount < 1:
+            return Response({'detail': 'Неверное количество'}, status=status.HTTP_400_BAD_REQUEST)
+
+        size_name = request.data.get('size') or None
+        size = None
+        available = Size_Product.objects.filter(product=product).select_related('size')
+        if size_name:
+            link = available.filter(size__size=size_name).first()
+            if link is None:
+                return Response({'detail': 'У товара нет такого размера'}, status=status.HTTP_400_BAD_REQUEST)
+            size = link.size
+        elif available.exists():
+            return Response({'detail': 'Выберите размер'}, status=status.HTTP_400_BAD_REQUEST)
+
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        item, created = Cart_Product.objects.get_or_create(
+            cart=cart, product=product, size=size, defaults={'amount': amount},
+        )
+        if not created:
+            item.amount += amount
+            item.save()
+        return Response(cart_response(request.user), status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['delete'], url_path='clear')
+    def clear(self, request):
+        Cart_Product.objects.filter(cart__user=request.user).delete()
+        return Response(cart_response(request.user))
+
+
+class CartItemViewSet(mixins.UpdateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CartItemSerializer
+    http_method_names = ['patch', 'delete']
+
+    def get_queryset(self):
+        return Cart_Product.objects.filter(cart__user=self.request.user)
+
+    def partial_update(self, request, *args, **kwargs):
+        item = self.get_object()
+        try:
+            amount = int(request.data.get('amount'))
+        except (TypeError, ValueError):
+            return Response({'detail': 'Неверное количество'}, status=status.HTTP_400_BAD_REQUEST)
+        if amount < 1:
+            item.delete()
+        else:
+            item.amount = amount
+            item.save()
+        return Response(cart_response(request.user))
+
+    def destroy(self, request, *args, **kwargs):
+        self.get_object().delete()
+        return Response(cart_response(request.user))

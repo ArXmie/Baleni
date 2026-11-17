@@ -86,14 +86,17 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { productsApi } from '@/api'
 import { useCartStore } from '@/stores/cart'
+import { useAuthStore } from '@/stores/auth'
 import { useProductHover } from '@/composables/useProductHover'
 import { usePricePulse } from '@/composables/usePricePulse'
 
 const route = useRoute()
+const router = useRouter()
 const cart = useCartStore()
+const auth = useAuthStore()
 
 const product = ref(null)
 const similar = ref([])
@@ -120,13 +123,21 @@ function nextImage() {
   imageIndex.value = (imageIndex.value + 1) % product.value.images.length
 }
 
-function addToCart() {
+async function addToCart() {
+  if (!auth.isAuthenticated) {
+    router.push({ name: 'login' })
+    return
+  }
   if (!selectedSize.value && product.value?.sizes?.length) {
     alert('Выберите размер')
     return
   }
-  cart.add(product.value, selectedSize.value, 1)
-  alert('Товар добавлен в корзину')
+  try {
+    await cart.add(product.value, selectedSize.value, 1)
+    alert('Товар добавлен в корзину')
+  } catch (e) {
+    alert(e.response?.data?.detail || 'Не удалось добавить товар')
+  }
 }
 
 async function loadProduct() {

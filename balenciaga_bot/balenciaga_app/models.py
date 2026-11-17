@@ -103,3 +103,29 @@ class Commission_Product(models.Model):
         verbose_name = "Заказ-Товар"
         verbose_name_plural = "Заказы-Товары"
 
+
+class Cart(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cart')
+
+    class Meta:
+        verbose_name = "Корзина"
+        verbose_name_plural = "Корзины"
+
+    def __str__(self):
+        return 'Корзина {0.user}'.format(self)
+
+class Cart_Product(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    size = models.ForeignKey(Size, on_delete=models.SET_NULL, blank=True, null=True)
+    amount = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        verbose_name = "Корзина-Товар"
+        verbose_name_plural = "Корзины-Товары"
+        constraints = [
+            models.UniqueConstraint(fields=['cart', 'product', 'size'], name='unique_cart_product_size'),
+        ]
+
+    def __str__(self):
+        return '{0.product.name} x {0.amount}'.format(self)
